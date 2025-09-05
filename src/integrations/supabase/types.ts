@@ -14,7 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      voters: {
+        Row: {
+          ac_no: string | null
+          age: number | null
+          applicant_first_name: string | null
+          applicant_first_name_l1: string | null
+          applicant_full_name: string | null
+          applicant_full_name_l1: string | null
+          applicant_last_name: string | null
+          applicant_last_name_l1: string | null
+          booth_address: string | null
+          booth_address_l1: string | null
+          created_at: string
+          epic_number: string | null
+          gender: string | null
+          house_number: string | null
+          id: string
+          part_no: string | null
+          relation_full_name: string | null
+          relation_full_name_l1: string | null
+          relation_last_name_l1: string | null
+          relation_type: string | null
+          section_no: string | null
+          slnoinpart: string | null
+          updated_at: string
+          v_address: string | null
+          v_address_l1: string | null
+        }
+        Insert: {
+          ac_no?: string | null
+          age?: number | null
+          applicant_first_name?: string | null
+          applicant_first_name_l1?: string | null
+          applicant_full_name?: string | null
+          applicant_full_name_l1?: string | null
+          applicant_last_name?: string | null
+          applicant_last_name_l1?: string | null
+          booth_address?: string | null
+          booth_address_l1?: string | null
+          created_at?: string
+          epic_number?: string | null
+          gender?: string | null
+          house_number?: string | null
+          id?: string
+          part_no?: string | null
+          relation_full_name?: string | null
+          relation_full_name_l1?: string | null
+          relation_last_name_l1?: string | null
+          relation_type?: string | null
+          section_no?: string | null
+          slnoinpart?: string | null
+          updated_at?: string
+          v_address?: string | null
+          v_address_l1?: string | null
+        }
+        Update: {
+          ac_no?: string | null
+          age?: number | null
+          applicant_first_name?: string | null
+          applicant_first_name_l1?: string | null
+          applicant_full_name?: string | null
+          applicant_full_name_l1?: string | null
+          applicant_last_name?: string | null
+          applicant_last_name_l1?: string | null
+          booth_address?: string | null
+          booth_address_l1?: string | null
+          created_at?: string
+          epic_number?: string | null
+          gender?: string | null
+          house_number?: string | null
+          id?: string
+          part_no?: string | null
+          relation_full_name?: string | null
+          relation_full_name_l1?: string | null
+          relation_last_name_l1?: string | null
+          relation_type?: string | null
+          section_no?: string | null
+          slnoinpart?: string | null
+          updated_at?: string
+          v_address?: string | null
+          v_address_l1?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
