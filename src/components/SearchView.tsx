@@ -146,7 +146,7 @@ const displayVoters = useMemo(() => {
     gender: row.gender ?? '',
     mobile: '',
     address: row.v_address || row.v_address_l1 || row.booth_address || row.booth_address_l1 || '',
-    boothNo: row.part_no || '',
+    boothNo: row.ac_no || '',
     cardNo: row.epic_number || '',
     caste: undefined,
     profession: undefined,
@@ -164,7 +164,8 @@ const filteredVoters = useMemo(() => {
       (voter.name || '').toLowerCase().includes(st) ||
       (voter.mobile || '').includes(searchTerm) ||
       (voter.cardNo || '').toLowerCase().includes(st) ||
-      (voter.address || '').toLowerCase().includes(st)
+      (voter.address || '').toLowerCase().includes(st) ||
+      (voter.boothNo || '').toLowerCase().includes(st)
     );
   }
 
@@ -407,7 +408,7 @@ const handleFileChange = async (e: any) => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name, mobile, card no..."
+              placeholder="Search by name, mobile, card no, AC no, address..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
@@ -417,15 +418,13 @@ const handleFileChange = async (e: any) => {
           <div className="flex gap-2">
             <Select value={selectedBooth} onValueChange={setSelectedBooth}>
               <SelectTrigger className="bg-white/10 border-white/20 text-primary-foreground">
-                <SelectValue placeholder="All Booths" />
+                <SelectValue placeholder="All AC Numbers" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Booths</SelectItem>
-                <SelectItem value="B101">Booth B101</SelectItem>
-                <SelectItem value="B102">Booth B102</SelectItem>
-                <SelectItem value="B103">Booth B103</SelectItem>
-                <SelectItem value="B104">Booth B104</SelectItem>
-                <SelectItem value="B105">Booth B105</SelectItem>
+                <SelectContent>
+                <SelectItem value="all">All AC Numbers</SelectItem>
+                {Array.from(new Set(displayVoters.map(v => v.boothNo).filter(Boolean))).sort().map(acNo => (
+                  <SelectItem key={acNo} value={acNo}>AC {acNo}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -504,7 +503,7 @@ const handleFileChange = async (e: any) => {
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Building className="w-4 h-4" />
-                        <span>Booth: {voter.boothNo}</span>
+                        <span>AC No: {voter.boothNo}</span>
                       </div>
                     </div>
 
