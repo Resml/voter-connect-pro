@@ -11,6 +11,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import * as XLSX from 'xlsx';
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Mock voter data
 const mockVoters = [
@@ -92,6 +93,7 @@ interface SearchViewProps {
 }
 
 const SearchView = ({ searchType, onBack }: SearchViewProps) => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBooth, setSelectedBooth] = useState('all');
   const [selectedAge, setSelectedAge] = useState('all');
@@ -408,7 +410,7 @@ const handleFileChange = async (e: any) => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name, mobile, card no, AC no, address..."
+              placeholder={t('search.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
@@ -418,10 +420,10 @@ const handleFileChange = async (e: any) => {
           <div className="flex gap-2">
             <Select value={selectedBooth} onValueChange={setSelectedBooth}>
               <SelectTrigger className="bg-white/10 border-white/20 text-primary-foreground">
-                <SelectValue placeholder="All AC Numbers" />
+                <SelectValue placeholder={t('search.allACNumbers')} />
               </SelectTrigger>
                 <SelectContent>
-                <SelectItem value="all">All AC Numbers</SelectItem>
+                <SelectItem value="all">{t('search.allACNumbers')}</SelectItem>
                 {Array.from(new Set(displayVoters.map(v => v.boothNo).filter(Boolean))).sort().map(acNo => (
                   <SelectItem key={acNo} value={acNo}>AC {acNo}</SelectItem>
                 ))}
@@ -449,7 +451,7 @@ const handleFileChange = async (e: any) => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="bg-primary/10 text-primary">
-              {filteredVoters.length} Results
+              {filteredVoters.length} {t('search.results')}
             </Badge>
           </div>
           <Button
@@ -459,7 +461,7 @@ const handleFileChange = async (e: any) => {
             className="btn-secondary"
           >
             <Download className="w-4 h-4 mr-2" />
-            Export
+            {t('search.export')}
           </Button>
         </div>
 
@@ -489,7 +491,7 @@ const handleFileChange = async (e: any) => {
                       </div>
                       {voter.alive && (
                         <Badge variant="default" className="bg-success text-success-foreground">
-                          Active
+                          {t('voter.active')}
                         </Badge>
                       )}
                     </div>
@@ -497,19 +499,19 @@ const handleFileChange = async (e: any) => {
                     <div className="space-y-1 text-sm mt-2">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Hash className="w-4 h-4" />
-                        <span>Card No: {voter.cardNo}</span>
+                        <span>{t('voter.cardNo')}: {voter.cardNo}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Phone className="w-4 h-4" />
-                        <span>Mobile: {voter.mobile || 'Not available'}</span>
+                        <span>{t('voter.mobile')}: {voter.mobile || t('voter.notAvailable')}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <MapPin className="w-4 h-4" />
-                        <span className="line-clamp-1">Address: {voter.address}</span>
+                        <span className="line-clamp-1">{t('voter.address')}: {voter.address}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Building className="w-4 h-4" />
-                        <span>Booth No: {voter.boothNo}</span>
+                        <span>{t('voter.boothNo')}: {voter.boothNo}</span>
                       </div>
                      </div>
 
@@ -528,8 +530,8 @@ const handleFileChange = async (e: any) => {
         {filteredVoters.length === 0 && (
           <div className="text-center py-12">
             <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No Results Found</h3>
-            <p className="text-muted-foreground">Try adjusting your search criteria</p>
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t('search.noResults')}</h3>
+            <p className="text-muted-foreground">{t('search.adjustCriteria')}</p>
           </div>
         )}
       </div>

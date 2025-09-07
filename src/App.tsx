@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Login from "@/components/Login";
 import Dashboard from "@/components/Dashboard";
 import SearchView from "@/components/SearchView";
@@ -43,29 +44,31 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        
-        {currentView === 'login' && (
-          <Login onLogin={handleLogin} />
-        )}
-        
-        {currentView === 'dashboard' && user && (
-          <Dashboard 
-            user={user} 
-            onSearchSelect={handleSearchSelect}
-            onLogout={handleLogout}
-          />
-        )}
-        
-        {currentView === 'search' && (
-          <SearchView 
-            searchType={selectedSearch}
-            onBack={handleBackToDashboard}
-          />
-        )}
-      </TooltipProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          
+          {currentView === 'login' && (
+            <Login onLogin={handleLogin} />
+          )}
+          
+          {currentView === 'dashboard' && user && (
+            <Dashboard 
+              user={user} 
+              onSearchSelect={handleSearchSelect}
+              onLogout={handleLogout}
+            />
+          )}
+          
+          {currentView === 'search' && (
+            <SearchView 
+              searchType={selectedSearch}
+              onBack={handleBackToDashboard}
+            />
+          )}
+        </TooltipProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 };

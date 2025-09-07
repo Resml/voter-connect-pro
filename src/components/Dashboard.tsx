@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Users, Search, MapPin, Calendar, Hash, Phone,
   Building, Heart, Home, Skull, Gift, UserX,
   Shield, List, CheckCircle, Briefcase, GraduationCap,
   FileSpreadsheet, Settings, Info, Download, Upload,
-  BarChart, UserCheck, Vote, HelpCircle, Globe, RefreshCw
+  BarChart, UserCheck, Vote, HelpCircle, Globe, RefreshCw, Languages
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface User {
   name: string;
@@ -25,40 +27,41 @@ interface DashboardProps {
 const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showReportOptions, setShowReportOptions] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const mainOptions = [
-    { id: 'report', label: 'Report', icon: FileSpreadsheet, color: 'bg-primary' },
-    { id: 'usermgt', label: 'User Mgt', icon: UserCheck, color: 'bg-accent' },
-    { id: 'statistics', label: 'Statistics', icon: BarChart, color: 'bg-success' },
-    { id: 'boothmgt', label: 'Booth Mgt', icon: Building, color: 'bg-warning' },
-    { id: 'survey', label: 'Survey', icon: List, color: 'bg-primary' },
-    { id: 'settings', label: 'Setting', icon: Settings, color: 'bg-accent' },
-    { id: 'election', label: 'निवडणूक व्यवस्थापन', icon: Vote, color: 'bg-success' },
-    { id: 'query', label: 'क्वेरी', icon: HelpCircle, color: 'bg-warning' },
-    { id: 'sync', label: 'Sync', icon: RefreshCw, color: 'bg-primary' },
-    { id: 'about', label: 'About Us', icon: Info, color: 'bg-accent' }
+    { id: 'report', label: t('main.report'), icon: FileSpreadsheet, color: 'bg-primary' },
+    { id: 'usermgt', label: t('main.userMgt'), icon: UserCheck, color: 'bg-accent' },
+    { id: 'statistics', label: t('main.statistics'), icon: BarChart, color: 'bg-success' },
+    { id: 'boothmgt', label: t('main.boothMgt'), icon: Building, color: 'bg-warning' },
+    { id: 'survey', label: t('main.survey'), icon: List, color: 'bg-primary' },
+    { id: 'settings', label: t('main.setting'), icon: Settings, color: 'bg-accent' },
+    { id: 'election', label: t('main.election'), icon: Vote, color: 'bg-success' },
+    { id: 'query', label: t('main.query'), icon: HelpCircle, color: 'bg-warning' },
+    { id: 'sync', label: t('main.sync'), icon: RefreshCw, color: 'bg-primary' },
+    { id: 'about', label: t('main.aboutUs'), icon: Info, color: 'bg-accent' }
   ];
 
   const reportOptions = [
-    { id: 'name', label: 'Name wise', icon: Users, color: 'bg-primary' },
-    { id: 'alphabetical', label: 'Alphabetical', icon: Search, color: 'bg-accent' },
-    { id: 'booth', label: 'Booth wise', icon: MapPin, color: 'bg-success' },
-    { id: 'age', label: 'Age wise', icon: Hash, color: 'bg-warning' },
-    { id: 'address', label: 'Address wise', icon: Home, color: 'bg-primary' },
-    { id: 'lastname', label: 'Last Name wise', icon: Users, color: 'bg-accent' },
-    { id: 'mobile', label: 'Mobile No', icon: Phone, color: 'bg-success' },
-    { id: 'caste', label: 'Caste wise', icon: Shield, color: 'bg-warning' },
-    { id: 'favour', label: 'Favour wise', icon: Heart, color: 'bg-destructive' },
-    { id: 'nagar', label: 'Nagar wise', icon: Building, color: 'bg-primary' },
-    { id: 'society', label: 'Society wise', icon: Home, color: 'bg-accent' },
-    { id: 'dead', label: 'Dead wise', icon: Skull, color: 'bg-muted' },
-    { id: 'birthday', label: 'Birthday list', icon: Gift, color: 'bg-success' },
-    { id: 'nonvoters', label: 'Non-voters list', icon: UserX, color: 'bg-warning' },
-    { id: 'role', label: 'Role list', icon: Shield, color: 'bg-primary' },
-    { id: 'visited', label: 'Visited list', icon: CheckCircle, color: 'bg-success' },
-    { id: 'party', label: 'Party Worker', icon: Users, color: 'bg-warning' },
-    { id: 'education', label: 'Education', icon: GraduationCap, color: 'bg-primary' },
-    { id: 'profession', label: 'Profession', icon: Briefcase, color: 'bg-accent' }
+    { id: 'name', label: t('search.nameWise'), icon: Users, color: 'bg-primary' },
+    { id: 'alphabetical', label: t('search.alphabetical'), icon: Search, color: 'bg-accent' },
+    { id: 'booth', label: t('search.boothWise'), icon: MapPin, color: 'bg-success' },
+    { id: 'age', label: t('search.ageWise'), icon: Hash, color: 'bg-warning' },
+    { id: 'address', label: t('search.addressWise'), icon: Home, color: 'bg-primary' },
+    { id: 'lastname', label: t('search.lastNameWise'), icon: Users, color: 'bg-accent' },
+    { id: 'mobile', label: t('search.mobileNo'), icon: Phone, color: 'bg-success' },
+    { id: 'caste', label: t('search.casteWise'), icon: Shield, color: 'bg-warning' },
+    { id: 'favour', label: t('search.favourWise'), icon: Heart, color: 'bg-destructive' },
+    { id: 'nagar', label: t('search.nagarWise'), icon: Building, color: 'bg-primary' },
+    { id: 'society', label: t('search.societyWise'), icon: Home, color: 'bg-accent' },
+    { id: 'dead', label: t('search.deadWise'), icon: Skull, color: 'bg-muted' },
+    { id: 'birthday', label: t('search.birthdayList'), icon: Gift, color: 'bg-success' },
+    { id: 'nonvoters', label: t('search.nonVotersList'), icon: UserX, color: 'bg-warning' },
+    { id: 'role', label: t('search.roleList'), icon: Shield, color: 'bg-primary' },
+    { id: 'visited', label: t('search.visitedList'), icon: CheckCircle, color: 'bg-success' },
+    { id: 'party', label: t('search.partyWorker'), icon: Users, color: 'bg-warning' },
+    { id: 'education', label: t('search.education'), icon: GraduationCap, color: 'bg-primary' },
+    { id: 'profession', label: t('search.profession'), icon: Briefcase, color: 'bg-accent' }
   ];
 
   return (
@@ -68,12 +71,22 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
         <div className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold">Voter Management</h1>
-              <p className="text-primary-foreground/80 text-sm">Welcome, {user.name}</p>
+              <h1 className="text-xl font-bold">{t('dashboard.title')}</h1>
+              <p className="text-primary-foreground/80 text-sm">{t('dashboard.welcome')}, {user.name}</p>
             </div>
             <div className="flex items-center gap-2">
+              <Select value={language} onValueChange={(value: 'en' | 'mr') => setLanguage(value)}>
+                <SelectTrigger className="w-24 bg-white/10 border-white/20 text-primary-foreground">
+                  <Languages className="w-4 h-4 mr-1" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">{t('language.english')}</SelectItem>
+                  <SelectItem value="mr">{t('language.marathi')}</SelectItem>
+                </SelectContent>
+              </Select>
               <Badge variant="secondary" className="bg-white/20 text-primary-foreground border-0">
-                Online
+                {t('dashboard.online')}
               </Badge>
               <Button
                 variant="ghost"
@@ -98,7 +111,7 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
                 onClick={() => onSearchSelect('import')}
               >
                 <Upload className="w-4 h-4 mr-2" />
-                Import Data
+                {t('action.importData')}
               </Button>
               <Button
                 variant="ghost"
@@ -107,7 +120,7 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
                 onClick={() => onSearchSelect('export')}
               >
                 <Download className="w-4 h-4 mr-2" />
-                Export Data
+                {t('action.exportData')}
               </Button>
               <Button
                 variant="ghost"
@@ -116,7 +129,7 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
                 onClick={() => onSearchSelect('about')}
               >
                 <Info className="w-4 h-4 mr-2" />
-                About
+                {t('action.about')}
               </Button>
               <Button
                 variant="ghost"
@@ -124,7 +137,7 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
                 className="text-primary-foreground hover:bg-white/10"
                 onClick={onLogout}
               >
-                Logout
+                {t('action.logout')}
               </Button>
             </div>
           </div>
@@ -136,8 +149,8 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
         {!showReportOptions ? (
           <>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold text-foreground mb-2">Main Dashboard</h2>
-              <p className="text-muted-foreground text-sm">Select an option to access features</p>
+              <h2 className="text-lg font-semibold text-foreground mb-2">{t('dashboard.mainDashboard')}</h2>
+              <p className="text-muted-foreground text-sm">{t('dashboard.selectOption')}</p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -174,10 +187,10 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
                 onClick={() => setShowReportOptions(false)}
                 className="mb-4"
               >
-                ← Back to Main
+                {t('dashboard.backToMain')}
               </Button>
-              <h2 className="text-lg font-semibold text-foreground mb-2">Reports & Search</h2>
-              <p className="text-muted-foreground text-sm">Select a category to search voter data</p>
+              <h2 className="text-lg font-semibold text-foreground mb-2">{t('dashboard.reportsSearch')}</h2>
+              <p className="text-muted-foreground text-sm">{t('dashboard.selectCategory')}</p>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -206,19 +219,19 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="card-elevated p-4 text-center border-border">
             <div className="text-2xl font-bold text-primary">12,456</div>
-            <div className="text-xs text-muted-foreground">Total Voters</div>
+            <div className="text-xs text-muted-foreground">{t('stats.totalVoters')}</div>
           </Card>
           <Card className="card-elevated p-4 text-center border-border">
             <div className="text-2xl font-bold text-success">8,234</div>
-            <div className="text-xs text-muted-foreground">Active</div>
+            <div className="text-xs text-muted-foreground">{t('stats.active')}</div>
           </Card>
           <Card className="card-elevated p-4 text-center border-border">
             <div className="text-2xl font-bold text-warning">156</div>
-            <div className="text-xs text-muted-foreground">Booths</div>
+            <div className="text-xs text-muted-foreground">{t('stats.booths')}</div>
           </Card>
           <Card className="card-elevated p-4 text-center border-border">
             <div className="text-2xl font-bold text-accent">45</div>
-            <div className="text-xs text-muted-foreground">Areas</div>
+            <div className="text-xs text-muted-foreground">{t('stats.areas')}</div>
           </Card>
         </div>
       </div>
