@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   ArrowLeft, Search, Filter, Download, MapPin, Phone, 
-  Calendar, User, Building, FileText, Upload
+  Calendar, User, Building, FileText, Upload, Hash, Users
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import * as XLSX from 'xlsx';
@@ -146,7 +146,7 @@ const displayVoters = useMemo(() => {
     gender: row.gender ?? '',
     mobile: '',
     address: row.v_address || row.v_address_l1 || row.booth_address || row.booth_address_l1 || '',
-    boothNo: row.ac_no || '',
+    boothNo: `${row.ac_no || ''}-${row.part_no || ''}`,
     cardNo: row.epic_number || '',
     caste: undefined,
     profession: undefined,
@@ -468,21 +468,23 @@ const handleFileChange = async (e: any) => {
             <Card key={voter.id} className="card-elevated border-border">
               <div className="p-4">
                 <div className="flex items-start gap-4">
-                  {/* Avatar Placeholder */}
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                  {/* Profile Photo */}
+                  <div className="w-16 h-20 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center text-primary-foreground font-semibold">
                     {voter.name.charAt(0)}
                   </div>
 
-                  {/* Voter Info */}
-                  <div className="flex-1 space-y-2">
+                  {/* Right side of photo info */}
+                  <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className="font-semibold text-foreground">{voter.name}</h3>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>{voter.age} years • {voter.gender}</span>
-                          <Badge variant="outline">
-                            {voter.cardNo}
-                          </Badge>
+                        {/* Part No / SlNoInPart */}
+                        <div className="text-sm text-muted-foreground">
+                          {voters.find(v => v.id === voter.id)?.part_no || ''} / {voters.find(v => v.id === voter.id)?.slnoinpart || ''}
+                        </div>
+                        {/* Gender / Age */}
+                        <div className="text-sm text-muted-foreground">
+                          {voter.gender || ''} / {voters.find(v => v.id === voter.id)?.age || ''}
                         </div>
                       </div>
                       {voter.alive && (
@@ -492,20 +494,24 @@ const handleFileChange = async (e: any) => {
                       )}
                     </div>
 
-                    <div className="space-y-1 text-sm">
+                    <div className="space-y-1 text-sm mt-2">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Hash className="w-4 h-4" />
+                        <span>Card No: {voter.cardNo}</span>
+                      </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Phone className="w-4 h-4" />
-                        <span>{voter.mobile}</span>
+                        <span>Mobile: {voter.mobile || 'Not available'}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <MapPin className="w-4 h-4" />
-                        <span className="line-clamp-1">{voter.address}</span>
+                        <span className="line-clamp-1">Address: {voter.address}</span>
                       </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Building className="w-4 h-4" />
-                        <span>AC No: {voter.boothNo}</span>
+                        <span>Booth No: {voter.boothNo}</span>
                       </div>
-                    </div>
+                     </div>
 
                     <div className="flex flex-wrap gap-2 pt-2">
                       {voter.caste && <Badge variant="secondary">{voter.caste}</Badge>}

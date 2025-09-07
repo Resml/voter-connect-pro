@@ -6,7 +6,8 @@ import {
   Users, Search, MapPin, Calendar, Hash, Phone,
   Building, Heart, Home, Skull, Gift, UserX,
   Shield, List, CheckCircle, Briefcase, GraduationCap,
-  FileSpreadsheet, Settings, Info, Download, Upload
+  FileSpreadsheet, Settings, Info, Download, Upload,
+  BarChart, UserCheck, Vote, HelpCircle, Globe, RefreshCw
 } from 'lucide-react';
 
 interface User {
@@ -23,8 +24,22 @@ interface DashboardProps {
 
 const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
   const [showSettings, setShowSettings] = useState(false);
+  const [showReportOptions, setShowReportOptions] = useState(false);
 
-  const searchOptions = [
+  const mainOptions = [
+    { id: 'report', label: 'Report', icon: FileSpreadsheet, color: 'bg-primary' },
+    { id: 'usermgt', label: 'User Mgt', icon: UserCheck, color: 'bg-accent' },
+    { id: 'statistics', label: 'Statistics', icon: BarChart, color: 'bg-success' },
+    { id: 'boothmgt', label: 'Booth Mgt', icon: Building, color: 'bg-warning' },
+    { id: 'survey', label: 'Survey', icon: List, color: 'bg-primary' },
+    { id: 'settings', label: 'Setting', icon: Settings, color: 'bg-accent' },
+    { id: 'election', label: 'निवडणूक व्यवस्थापन', icon: Vote, color: 'bg-success' },
+    { id: 'query', label: 'क्वेरी', icon: HelpCircle, color: 'bg-warning' },
+    { id: 'sync', label: 'Sync', icon: RefreshCw, color: 'bg-primary' },
+    { id: 'about', label: 'About Us', icon: Info, color: 'bg-accent' }
+  ];
+
+  const reportOptions = [
     { id: 'name', label: 'Name wise', icon: Users, color: 'bg-primary' },
     { id: 'alphabetical', label: 'Alphabetical', icon: Search, color: 'bg-accent' },
     { id: 'booth', label: 'Booth wise', icon: MapPin, color: 'bg-success' },
@@ -40,7 +55,6 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
     { id: 'birthday', label: 'Birthday list', icon: Gift, color: 'bg-success' },
     { id: 'nonvoters', label: 'Non-voters list', icon: UserX, color: 'bg-warning' },
     { id: 'role', label: 'Role list', icon: Shield, color: 'bg-primary' },
-    { id: 'survey', label: 'Survey list', icon: List, color: 'bg-accent' },
     { id: 'visited', label: 'Visited list', icon: CheckCircle, color: 'bg-success' },
     { id: 'party', label: 'Party Worker', icon: Users, color: 'bg-warning' },
     { id: 'education', label: 'Education', icon: GraduationCap, color: 'bg-primary' },
@@ -119,30 +133,74 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
 
       {/* Dashboard Grid */}
       <div className="p-4">
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-foreground mb-2">Search & Reports</h2>
-          <p className="text-muted-foreground text-sm">Select a category to search voter data</p>
-        </div>
+        {!showReportOptions ? (
+          <>
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-foreground mb-2">Main Dashboard</h2>
+              <p className="text-muted-foreground text-sm">Select an option to access features</p>
+            </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {searchOptions.map((option) => {
-            const Icon = option.icon;
-            return (
-              <Card
-                key={option.id}
-                className="card-elevated cursor-pointer hover:scale-105 transition-all duration-300 border-border"
-                onClick={() => onSearchSelect(option.id)}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {mainOptions.map((option) => {
+                const Icon = option.icon;
+                return (
+                  <Card
+                    key={option.id}
+                    className="card-elevated cursor-pointer hover:scale-105 transition-all duration-300 border-border"
+                    onClick={() => {
+                      if (option.id === 'report') {
+                        setShowReportOptions(true);
+                      } else {
+                        onSearchSelect(option.id);
+                      }
+                    }}
+                  >
+                    <div className="p-4 text-center">
+                      <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${option.color} text-white mb-3 shadow-soft`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-medium text-sm text-foreground">{option.label}</h3>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="mb-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowReportOptions(false)}
+                className="mb-4"
               >
-                <div className="p-4 text-center">
-                  <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${option.color} text-white mb-3 shadow-soft`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-medium text-sm text-foreground">{option.label}</h3>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+                ← Back to Main
+              </Button>
+              <h2 className="text-lg font-semibold text-foreground mb-2">Reports & Search</h2>
+              <p className="text-muted-foreground text-sm">Select a category to search voter data</p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {reportOptions.map((option) => {
+                const Icon = option.icon;
+                return (
+                  <Card
+                    key={option.id}
+                    className="card-elevated cursor-pointer hover:scale-105 transition-all duration-300 border-border"
+                    onClick={() => onSearchSelect(option.id)}
+                  >
+                    <div className="p-4 text-center">
+                      <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${option.color} text-white mb-3 shadow-soft`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-medium text-sm text-foreground">{option.label}</h3>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         {/* Stats */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
