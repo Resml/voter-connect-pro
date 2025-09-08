@@ -122,7 +122,20 @@ useEffect(() => {
   const fetchVoters = async () => {
     try {
       setLoading(true);
-      const { data, error } = await (supabase as any)
+      
+      // Check if user is authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({ 
+          title: 'Authentication Required', 
+          description: 'Please sign in to view voter data', 
+          variant: 'destructive' 
+        });
+        setVoters([]);
+        return;
+      }
+
+      const { data, error } = await supabase
         .from('voters')
         .select('*')
         .limit(2000);
@@ -207,6 +220,18 @@ const handleFileChange = async (e: any) => {
   try {
     const file = e.target.files?.[0];
     if (!file) return;
+    
+    // Check if user is authenticated before import
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({ 
+        title: 'Authentication Required', 
+        description: 'Please sign in to import data', 
+        variant: 'destructive' 
+      });
+      return;
+    }
+
     setLoading(true);
     toast({ title: "Importing...", description: "Parsing Excel file, please wait..." });
 
@@ -251,7 +276,7 @@ const handleFileChange = async (e: any) => {
     let inserted = 0;
     for (let i = 0; i < mapped.length; i += chunkSize) {
       const chunk = mapped.slice(i, i + chunkSize);
-      const { error } = await (supabase as any).from('voters').insert(chunk);
+      const { error } = await supabase.from('voters').insert(chunk);
       if (error) {
         console.error('Import error:', error);
         toast({ title: 'Import failed', description: error.message, variant: 'destructive' });
@@ -261,7 +286,7 @@ const handleFileChange = async (e: any) => {
     }
 
     // Refresh data
-    const { data } = await (supabase as any).from('voters').select('*').limit(2000);
+    const { data } = await supabase.from('voters').select('*').limit(2000);
     setVoters(data || []);
 
     toast({ title: 'Import complete', description: `Inserted ${inserted} records.` });
