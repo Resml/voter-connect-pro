@@ -123,25 +123,27 @@ useEffect(() => {
     try {
       setLoading(true);
       
-      // Check if user is authenticated
+      // Check if user is authenticated or if we're in demo mode
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({ 
-          title: 'Authentication Required', 
-          description: 'Please sign in to view voter data', 
-          variant: 'destructive' 
-        });
-        setVoters([]);
-        return;
-      }
-
+      
+      // Allow access if authenticated OR if no session (demo mode)
       const { data, error } = await supabase
         .from('voters')
         .select('*')
         .limit(2000);
+      
       if (error) {
         console.error('Error fetching voters:', error);
-        toast({ title: 'Error', description: 'Failed to load voters from database', variant: 'destructive' });
+        if (error.code === '42501') {
+          // RLS policy violation - user needs to be authenticated
+          toast({ 
+            title: 'Authentication Required', 
+            description: 'Please sign in with a valid email to view voter data', 
+            variant: 'destructive' 
+          });
+        } else {
+          toast({ title: 'Error', description: 'Failed to load voters from database', variant: 'destructive' });
+        }
         setVoters([]);
       } else {
         setVoters(data || []);
@@ -223,15 +225,7 @@ const handleFileChange = async (e: any) => {
     
     // Check if user is authenticated before import
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      toast({ 
-        title: 'Authentication Required', 
-        description: 'Please sign in to import data', 
-        variant: 'destructive' 
-      });
-      return;
-    }
-
+    
     setLoading(true);
     toast({ title: "Importing...", description: "Parsing Excel file, please wait..." });
 

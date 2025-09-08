@@ -42,13 +42,29 @@ const Login = ({ onLogin }: LoginProps) => {
     }
 
     try {
-      // Create a dummy email if not provided, using mobile number
-      const email = formData.email || `${formData.mobile}@voter.local`;
+      // If no email provided, skip Supabase auth and just do local login
+      if (!formData.email) {
+        // Store user data and login without Supabase auth
+        onLogin({
+          name: formData.name,
+          mobile: formData.mobile,
+          email: formData.email
+        });
+
+        toast({
+          title: "Login Successful",
+          description: `Welcome, ${formData.name}!`,
+          variant: "default"
+        });
+        return;
+      }
+
+      // Only use Supabase auth if email is provided
       const password = 'voter123'; // Simple demo password
       
       // Sign up user with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: email,
+        email: formData.email,
         password: password,
       });
 
@@ -56,7 +72,7 @@ const Login = ({ onLogin }: LoginProps) => {
         // If user already exists, try to sign in
         if (authError.message.includes('already registered')) {
           const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-            email: email,
+            email: formData.email,
             password: password,
           });
           
