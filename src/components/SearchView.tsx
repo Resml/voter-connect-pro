@@ -122,28 +122,13 @@ useEffect(() => {
   const fetchVoters = async () => {
     try {
       setLoading(true);
-      
-      // Check if user is authenticated or if we're in demo mode
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      // Allow access if authenticated OR if no session (demo mode)
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('voters')
         .select('*')
         .limit(2000);
-      
       if (error) {
         console.error('Error fetching voters:', error);
-        if (error.code === '42501') {
-          // RLS policy violation - user needs to be authenticated
-          toast({ 
-            title: 'Authentication Required', 
-            description: 'Please sign in with a valid email to view voter data', 
-            variant: 'destructive' 
-          });
-        } else {
-          toast({ title: 'Error', description: 'Failed to load voters from database', variant: 'destructive' });
-        }
+        toast({ title: 'Error', description: 'Failed to load voters from database', variant: 'destructive' });
         setVoters([]);
       } else {
         setVoters(data || []);
@@ -222,10 +207,6 @@ const handleFileChange = async (e: any) => {
   try {
     const file = e.target.files?.[0];
     if (!file) return;
-    
-    // Check if user is authenticated before import
-    const { data: { session } } = await supabase.auth.getSession();
-    
     setLoading(true);
     toast({ title: "Importing...", description: "Parsing Excel file, please wait..." });
 
@@ -270,7 +251,7 @@ const handleFileChange = async (e: any) => {
     let inserted = 0;
     for (let i = 0; i < mapped.length; i += chunkSize) {
       const chunk = mapped.slice(i, i + chunkSize);
-      const { error } = await supabase.from('voters').insert(chunk);
+      const { error } = await (supabase as any).from('voters').insert(chunk);
       if (error) {
         console.error('Import error:', error);
         toast({ title: 'Import failed', description: error.message, variant: 'destructive' });
@@ -280,7 +261,7 @@ const handleFileChange = async (e: any) => {
     }
 
     // Refresh data
-    const { data } = await supabase.from('voters').select('*').limit(2000);
+    const { data } = await (supabase as any).from('voters').select('*').limit(2000);
     setVoters(data || []);
 
     toast({ title: 'Import complete', description: `Inserted ${inserted} records.` });

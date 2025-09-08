@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Vote, Shield, Users } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface LoginProps {
   onLogin: (userData: { name: string; mobile: string; email?: string }) => void;
@@ -19,7 +18,7 @@ const Login = ({ onLogin }: LoginProps) => {
     email: ''
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Simple activation key validation (demo)
@@ -41,79 +40,18 @@ const Login = ({ onLogin }: LoginProps) => {
       return;
     }
 
-    try {
-      // If no email provided, skip Supabase auth and just do local login
-      if (!formData.email) {
-        // Store user data and login without Supabase auth
-        onLogin({
-          name: formData.name,
-          mobile: formData.mobile,
-          email: formData.email
-        });
+    // Store user data and login
+    onLogin({
+      name: formData.name,
+      mobile: formData.mobile,
+      email: formData.email
+    });
 
-        toast({
-          title: "Login Successful",
-          description: `Welcome, ${formData.name}!`,
-          variant: "default"
-        });
-        return;
-      }
-
-      // Only use Supabase auth if email is provided
-      const password = 'voter123'; // Simple demo password
-      
-      // Sign up user with Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: password,
-      });
-
-      if (authError) {
-        // If user already exists, try to sign in
-        if (authError.message.includes('already registered')) {
-          const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: password,
-          });
-          
-          if (signInError) {
-            toast({
-              title: "Authentication Error",
-              description: "Failed to authenticate user. Please try again.",
-              variant: "destructive"
-            });
-            return;
-          }
-        } else {
-          toast({
-            title: "Authentication Error",
-            description: authError.message,
-            variant: "destructive"
-          });
-          return;
-        }
-      }
-
-      // Store user data and login
-      onLogin({
-        name: formData.name,
-        mobile: formData.mobile,
-        email: formData.email
-      });
-
-      toast({
-        title: "Login Successful",
-        description: `Welcome, ${formData.name}!`,
-        variant: "default"
-      });
-    } catch (error) {
-      console.error('Login error:', error);
-      toast({
-        title: "Login Failed",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive"
-      });
-    }
+    toast({
+      title: "Login Successful",
+      description: `Welcome, ${formData.name}!`,
+      variant: "default"
+    });
   };
 
   return (
