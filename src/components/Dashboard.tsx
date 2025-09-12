@@ -21,10 +21,11 @@ interface User {
 interface DashboardProps {
   user: User;
   onSearchSelect: (searchType: string) => void;
+  onViewSelect: (viewType: string, data?: any) => void;
   onLogout: () => void;
 }
 
-const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
+const Dashboard = ({ user, onSearchSelect, onViewSelect, onLogout }: DashboardProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showReportOptions, setShowReportOptions] = useState(false);
   const { language, setLanguage, t } = useLanguage();
@@ -163,6 +164,8 @@ const Dashboard = ({ user, onSearchSelect, onLogout }: DashboardProps) => {
                     onClick={() => {
                       if (option.id === 'report') {
                         setShowReportOptions(true);
+                      } else if (['usermgt', 'statistics', 'survey', 'settings', 'query', 'about'].includes(option.id)) {
+                        onViewSelect(option.id);
                       } else {
                         onSearchSelect(option.id);
                       }

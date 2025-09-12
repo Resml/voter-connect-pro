@@ -90,9 +90,10 @@ const mockVoters = [
 interface SearchViewProps {
   searchType: string;
   onBack: () => void;
+  onVoterSelect?: (voter: any) => void;
 }
 
-const SearchView = ({ searchType, onBack }: SearchViewProps) => {
+const SearchView = ({ searchType, onBack, onVoterSelect }: SearchViewProps) => {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBooth, setSelectedBooth] = useState('all');
