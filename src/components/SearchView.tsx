@@ -102,21 +102,8 @@ const SearchView = ({ searchType, onBack, onVoterSelect }: SearchViewProps) => {
   const [voters, setVoters] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const getSearchTitle = (type: string) => {
-    const titles: { [key: string]: string } = {
-      name: 'Name wise Search',
-      alphabetical: 'Alphabetical Search',
-      booth: 'Booth wise Search',
-      age: 'Age wise Search',
-      address: 'Address wise Search',
-      mobile: 'Mobile Number Search',
-      caste: 'Caste wise Search',
-      birthday: 'Birthday List',
-      import: 'Import Excel Data',
-      export: 'Export Data',
-      about: 'About System'
-    };
-    return titles[type] || 'Search Results';
+const getSearchTitle = (type: string) => {
+    return t(`reports.${type}`) || 'Search Results';
   };
 
 useEffect(() => {
@@ -408,42 +395,139 @@ const handleFileChange = async (e: any) => {
 
         {/* Search Controls */}
         <div className="space-y-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder={t('search.searchPlaceholder')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
-            />
-          </div>
+          {/* Search inputs based on search type */}
+          {searchType === 'name' && (
+            <div className="space-y-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Type Voter Name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <Input placeholder="Last Name" className="bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60" />
+                <Input placeholder="First Name" className="bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60" />
+                <Input placeholder="Middle Name" className="bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60" />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="relative">
+                  <Input placeholder="Card No" className="pr-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60" />
+                  <Button size="sm" variant="ghost" className="absolute right-1 top-1/2 transform -translate-y-1/2 text-primary-foreground">
+                    <Hash className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Input placeholder="Booth No" className="bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60" />
+                <Input placeholder="Sr.No" className="bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60" />
+              </div>
+              <div className="flex gap-2">
+                <Button variant="secondary" size="sm" className="flex-1">History</Button>
+                <Button variant="secondary" size="sm" className="flex-1">Reset</Button>
+                <Button variant="secondary" size="sm" className="flex-1">Search</Button>
+              </div>
+            </div>
+          )}
 
-          <div className="flex gap-2">
-            <Select value={selectedBooth} onValueChange={setSelectedBooth}>
-              <SelectTrigger className="bg-white/10 border-white/20 text-primary-foreground">
-                <SelectValue placeholder={t('search.allACNumbers')} />
-              </SelectTrigger>
+          {searchType === 'age' && (
+            <div className="space-y-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder="Type Voter Name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary-foreground text-sm">Age From</span>
+                <Input placeholder="From" className="w-20 bg-white/10 border-white/20 text-primary-foreground" />
+                <span className="text-primary-foreground text-sm">To</span>
+                <Input placeholder="To" className="w-20 bg-white/10 border-white/20 text-primary-foreground" />
+                <div className="flex gap-2 ml-4">
+                  <label className="flex items-center gap-1 text-primary-foreground text-sm">
+                    <input type="radio" name="gender" value="M" className="accent-primary" />
+                    M
+                  </label>
+                  <label className="flex items-center gap-1 text-primary-foreground text-sm">
+                    <input type="radio" name="gender" value="F" className="accent-primary" />
+                    F
+                  </label>
+                  <label className="flex items-center gap-1 text-primary-foreground text-sm">
+                    <input type="radio" name="gender" value="Both" className="accent-primary" />
+                    Both
+                  </label>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="secondary" size="sm" className="flex-1">SMS</Button>
+                <Button variant="secondary" size="sm" className="flex-1">Reset</Button>
+                <Button variant="secondary" size="sm" className="flex-1">Search</Button>
+              </div>
+            </div>
+          )}
+
+          {(searchType === 'booth' || searchType === 'duplicate' || searchType === 'mobile' || searchType === 'address' || searchType === 'lastname' || searchType === 'caste') && (
+            <div className="space-y-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  placeholder={searchType === 'booth' ? "Search" : searchType === 'lastname' ? "Last Name" : "Search"}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button variant="secondary" size="sm" className="flex-1">SMS</Button>
+                <Button variant="secondary" size="sm" className="flex-1">Reset</Button>
+                <Button variant="secondary" size="sm" className="flex-1">Search</Button>
+              </div>
+            </div>
+          )}
+
+          {searchType === 'alphabetical' && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder={t('search.searchPlaceholder')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
+              />
+            </div>
+          )}
+
+          {(searchType === 'name' || searchType === 'alphabetical') && (
+            <div className="flex gap-2">
+              <Select value={selectedBooth} onValueChange={setSelectedBooth}>
+                <SelectTrigger className="bg-white/10 border-white/20 text-primary-foreground">
+                  <SelectValue placeholder={t('search.allACNumbers')} />
+                </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="all">{t('search.allACNumbers')}</SelectItem>
+                  {Array.from(new Set(displayVoters.map(v => v.boothNo).filter(Boolean))).sort().map(acNo => (
+                    <SelectItem key={acNo} value={acNo}>AC {acNo}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={selectedAge} onValueChange={setSelectedAge}>
+                <SelectTrigger className="bg-white/10 border-white/20 text-primary-foreground">
+                  <SelectValue placeholder="All Ages" />
+                </SelectTrigger>
                 <SelectContent>
-                <SelectItem value="all">{t('search.allACNumbers')}</SelectItem>
-                {Array.from(new Set(displayVoters.map(v => v.boothNo).filter(Boolean))).sort().map(acNo => (
-                  <SelectItem key={acNo} value={acNo}>AC {acNo}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={selectedAge} onValueChange={setSelectedAge}>
-              <SelectTrigger className="bg-white/10 border-white/20 text-primary-foreground">
-                <SelectValue placeholder="All Ages" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Ages</SelectItem>
-                <SelectItem value="18-25">18-25 years</SelectItem>
-                <SelectItem value="26-40">26-40 years</SelectItem>
-                <SelectItem value="41-60">41-60 years</SelectItem>
-                <SelectItem value="60-100">60+ years</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                  <SelectItem value="all">All Ages</SelectItem>
+                  <SelectItem value="18-25">18-25 years</SelectItem>
+                  <SelectItem value="26-40">26-40 years</SelectItem>
+                  <SelectItem value="41-60">41-60 years</SelectItem>
+                  <SelectItem value="60-100">60+ years</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
       </div>
 
@@ -467,65 +551,81 @@ const handleFileChange = async (e: any) => {
         </div>
 
         <div className="space-y-4">
-          {filteredVoters.map((voter) => (
-            <Card key={voter.id} className="card-elevated border-border">
-              <div className="p-4">
-                <div className="flex items-start gap-4">
-                  {/* Profile Photo */}
-                  <div className="w-16 h-20 bg-gradient-to-br from-primary to-primary-glow rounded-lg flex items-center justify-center text-primary-foreground font-semibold">
-                    {voter.name.charAt(0)}
-                  </div>
-
-                  {/* Right side of photo info */}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-foreground">{voter.name}</h3>
-                        {/* Part No / SlNoInPart */}
-                        <div className="text-sm text-muted-foreground">
-                          {voters.find(v => v.id === voter.id)?.part_no || ''} / {voters.find(v => v.id === voter.id)?.slnoinpart || ''}
+          {searchType === 'booth' ? (
+            // Booth list view
+            <div className="space-y-2">
+              {Array.from(new Set(displayVoters.map(v => v.boothNo).filter(Boolean))).sort().map((boothNo, index) => {
+                const voterCount = displayVoters.filter(v => v.boothNo === boothNo).length;
+                return (
+                  <Card key={boothNo} className="card-elevated border-border cursor-pointer hover:shadow-lg transition-shadow">
+                    <div className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-semibold text-lg">{index + 1}</div>
+                          <div className="text-sm text-muted-foreground">
+                            AC {boothNo} - Booth Address
+                          </div>
                         </div>
-                        {/* Gender / Age */}
-                        <div className="text-sm text-muted-foreground">
-                          {voter.gender || ''} / {voters.find(v => v.id === voter.id)?.age || ''}
+                        <div className="text-right">
+                          <div className="font-bold text-lg">{voterCount}</div>
+                          <div className="text-xs text-muted-foreground">Total: {voterCount}</div>
                         </div>
                       </div>
-                      {voter.alive && (
-                        <Badge variant="default" className="bg-success text-success-foreground">
-                          {t('voter.active')}
-                        </Badge>
-                      )}
                     </div>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            // Voter list view
+            filteredVoters.map((voter) => {
+              const voterData = voters.find(v => v.id === voter.id);
+              return (
+                <Card key={voter.id} className="card-elevated border-border cursor-pointer hover:shadow-lg transition-shadow"
+                      onClick={() => onVoterSelect && onVoterSelect(voter)}>
+                  <div className="p-4">
+                    <div className="flex items-start gap-4">
+                      {/* Profile Photo */}
+                      <div className="w-16 h-20 bg-gradient-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center text-white font-semibold">
+                        {voter.name.charAt(0)}
+                      </div>
 
-                    <div className="space-y-1 text-sm mt-2">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Hash className="w-4 h-4" />
-                        <span>{t('voter.cardNo')}: {voter.cardNo}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Phone className="w-4 h-4" />
-                        <span>{t('voter.mobile')}: {voter.mobile || t('voter.notAvailable')}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        <span className="line-clamp-1">{t('voter.address')}: {voter.address}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Building className="w-4 h-4" />
-                        <span>{t('voter.boothNo')}: {voter.boothNo}</span>
-                      </div>
-                     </div>
+                      {/* Voter Info */}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h3 className="font-semibold text-orange-600">{voter.name}</h3>
+                            <div className="text-sm text-muted-foreground">
+                              {voterData?.part_no || ''} / {voterData?.slnoinpart || ''}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {voter.gender || ''} / {voterData?.age || ''}
+                            </div>
+                          </div>
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
 
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {voter.caste && <Badge variant="secondary">{voter.caste}</Badge>}
-                      {voter.profession && <Badge variant="secondary">{voter.profession}</Badge>}
-                      {voter.education && <Badge variant="secondary">{voter.education}</Badge>}
+                        <div className="space-y-1 text-sm">
+                          <div className="text-orange-600">
+                            <span className="font-medium">{t('voter.address')}: </span>
+                            <span>{voter.address}</span>
+                          </div>
+                          <div className="text-orange-600">
+                            <span className="font-medium">{t('voter.mobile')}: </span>
+                            <span>{voter.mobile || '1'}</span>
+                          </div>
+                          <div className="text-orange-600">
+                            <span className="font-medium">{t('voter.cardNo')}: </span>
+                            <span>{voter.cardNo}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </Card>
-          ))}
+                </Card>
+              );
+            })
+          )}
         </div>
 
         {filteredVoters.length === 0 && (

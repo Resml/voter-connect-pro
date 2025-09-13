@@ -7,6 +7,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Login from "@/components/Login";
 import Dashboard from "@/components/Dashboard";
 import SearchView from "@/components/SearchView";
+import ReportsView from "@/components/ReportsView";
+import SurveyFormView from "@/components/SurveyFormView";
 import UserDetailView from "@/components/UserDetailView";
 import UserManagementView from "@/components/UserManagementView";
 import StatisticsView from "@/components/StatisticsView";
@@ -23,7 +25,7 @@ interface User {
   email?: string;
 }
 
-type ViewType = 'login' | 'dashboard' | 'search' | 'userDetail' | 'userMgt' | 'statistics' | 'survey' | 'settings' | 'query' | 'about';
+type ViewType = 'login' | 'dashboard' | 'reports' | 'search' | 'userDetail' | 'userMgt' | 'statistics' | 'survey' | 'settings' | 'query' | 'about' | 'electionMgt' | 'boothMgt' | 'sync' | 'surveyForm';
 
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -80,10 +82,17 @@ const App = () => {
             />
           )}
           
+          {currentView === 'reports' && (
+            <ReportsView 
+              onBack={handleBackToDashboard}
+              onSearchSelect={handleSearchSelect}
+            />
+          )}
+
           {currentView === 'search' && (
             <SearchView 
               searchType={selectedSearch}
-              onBack={handleBackToDashboard}
+              onBack={() => setCurrentView('reports')}
               onVoterSelect={(voter) => handleViewSelect('userDetail', voter)}
             />
           )}
@@ -110,6 +119,17 @@ const App = () => {
           {currentView === 'survey' && (
             <SurveyView 
               onBack={handleBackToDashboard}
+              onSurveySelect={(surveyType) => {
+                setSelectedSearch(surveyType);
+                setCurrentView('surveyForm');
+              }}
+            />
+          )}
+
+          {currentView === 'surveyForm' && (
+            <SurveyFormView 
+              onBack={() => setCurrentView('survey')}
+              searchType={selectedSearch}
             />
           )}
 

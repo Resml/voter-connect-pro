@@ -14,9 +14,10 @@ import { toast } from '@/hooks/use-toast';
 
 interface SurveyViewProps {
   onBack: () => void;
+  onSurveySelect: (surveyType: string) => void;
 }
 
-const SurveyView = ({ onBack }: SurveyViewProps) => {
+const SurveyView = ({ onBack, onSurveySelect }: SurveyViewProps) => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('nonvoter');
   const [searchTerm, setSearchTerm] = useState('');

@@ -31,16 +31,16 @@ const Dashboard = ({ user, onSearchSelect, onViewSelect, onLogout }: DashboardPr
   const { language, setLanguage, t } = useLanguage();
 
   const mainOptions = [
-    { id: 'report', label: t('main.report'), icon: FileSpreadsheet, color: 'bg-primary' },
-    { id: 'usermgt', label: t('main.userMgt'), icon: UserCheck, color: 'bg-accent' },
-    { id: 'statistics', label: t('main.statistics'), icon: BarChart, color: 'bg-success' },
-    { id: 'boothmgt', label: t('main.boothMgt'), icon: Building, color: 'bg-warning' },
-    { id: 'survey', label: t('main.survey'), icon: List, color: 'bg-primary' },
-    { id: 'settings', label: t('main.setting'), icon: Settings, color: 'bg-accent' },
-    { id: 'election', label: t('main.election'), icon: Vote, color: 'bg-success' },
-    { id: 'query', label: t('main.query'), icon: HelpCircle, color: 'bg-warning' },
-    { id: 'sync', label: t('main.sync'), icon: RefreshCw, color: 'bg-primary' },
-    { id: 'about', label: t('main.aboutUs'), icon: Info, color: 'bg-accent' }
+    { id: 'report', label: t('dashboard.report'), icon: FileSpreadsheet, color: 'bg-red-600' },
+    { id: 'userMgt', label: t('dashboard.userMgt'), icon: UserCheck, color: 'bg-red-600' },
+    { id: 'statistics', label: t('dashboard.statistics'), icon: BarChart, color: 'bg-red-600' },
+    { id: 'boothMgt', label: t('dashboard.boothMgt'), icon: Building, color: 'bg-red-600' },
+    { id: 'survey', label: t('dashboard.survey'), icon: List, color: 'bg-red-600' },
+    { id: 'settings', label: t('dashboard.settings'), icon: Settings, color: 'bg-red-600' },
+    { id: 'sync', label: t('dashboard.sync'), icon: RefreshCw, color: 'bg-red-600' },
+    { id: 'about', label: t('dashboard.about'), icon: Info, color: 'bg-red-600' },
+    { id: 'electionMgt', label: t('dashboard.electionMgt'), icon: Vote, color: 'bg-red-600' },
+    { id: 'query', label: t('dashboard.query'), icon: HelpCircle, color: 'bg-red-600' }
   ];
 
   const reportOptions = [
@@ -163,11 +163,9 @@ const Dashboard = ({ user, onSearchSelect, onViewSelect, onLogout }: DashboardPr
                     className="card-elevated cursor-pointer hover:scale-105 transition-all duration-300 border-border"
                     onClick={() => {
                       if (option.id === 'report') {
-                        setShowReportOptions(true);
-                      } else if (['usermgt', 'statistics', 'survey', 'settings', 'query', 'about'].includes(option.id)) {
-                        onViewSelect(option.id);
+                        onViewSelect('reports');
                       } else {
-                        onSearchSelect(option.id);
+                        onViewSelect(option.id);
                       }
                     }}
                   >
