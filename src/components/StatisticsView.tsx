@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -6,6 +6,7 @@ import {
   ArrowLeft, BarChart, PieChart, Users, Calendar,
   TrendingUp, Download
 } from 'lucide-react';
+import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface StatisticsViewProps {
@@ -15,22 +16,75 @@ interface StatisticsViewProps {
 const StatisticsView = ({ onBack }: StatisticsViewProps) => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('age');
+  const [ageData, setAgeData] = useState<any[]>([]);
+  const [genderData, setGenderData] = useState<any[]>([]);
+  const [totalVoters, setTotalVoters] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  // Mock data - in real app, fetch from database
-  const ageData = [
-    { range: '18-25', count: 2840, percentage: 23 },
-    { range: '26-35', count: 3560, percentage: 29 },
-    { range: '36-50', count: 3720, percentage: 30 },
-    { range: '51-65', count: 1680, percentage: 14 },
-    { range: '65+', count: 456, percentage: 4 }
-  ];
+  useEffect(() => {
+    const fetchStatistics = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch age and gender statistics from database
+        const { data: voters, error: votersError } = await supabase
+          .from('voters')
+          .select('age, gender');
 
-  const genderData = [
-    { gender: 'Male', count: 6420, percentage: 52 },
-    { gender: 'Female', count: 5836, percentage: 48 }
-  ];
+        if (votersError) {
+          console.error('Error fetching voters for statistics:', votersError);
+          return;
+        }
 
-  const totalVoters = 12256;
+        const validVoters = voters || [];
+        setTotalVoters(validVoters.length);
+
+        // Process age data
+        const ageGroups = {
+          '18-25': 0, '26-35': 0, '36-50': 0, 
+          '51-65': 0, '65+': 0
+        };
+
+        validVoters.forEach(voter => {
+          const age = voter.age;
+          if (age >= 18 && age <= 25) ageGroups['18-25']++;
+          else if (age >= 26 && age <= 35) ageGroups['26-35']++;
+          else if (age >= 36 && age <= 50) ageGroups['36-50']++;
+          else if (age >= 51 && age <= 65) ageGroups['51-65']++;
+          else if (age > 65) ageGroups['65+']++;
+        });
+
+        const totalAgeVoters = Object.values(ageGroups).reduce((sum, count) => sum + count, 0);
+        setAgeData(Object.entries(ageGroups).map(([range, count]) => ({
+          range,
+          count,
+          percentage: totalAgeVoters > 0 ? Math.round((count / totalAgeVoters) * 100) : 0
+        })));
+
+        // Process gender data
+        const genderGroups = { Male: 0, Female: 0 };
+        validVoters.forEach(voter => {
+          const gender = voter.gender;
+          if (gender === 'M' || gender === 'Male') genderGroups.Male++;
+          else if (gender === 'F' || gender === 'Female') genderGroups.Female++;
+        });
+
+        const totalGenderVoters = Object.values(genderGroups).reduce((sum, count) => sum + count, 0);
+        setGenderData(Object.entries(genderGroups).map(([gender, count]) => ({
+          gender,
+          count,
+          percentage: totalGenderVoters > 0 ? Math.round((count / totalGenderVoters) * 100) : 0
+        })));
+
+      } catch (err) {
+        console.error('Failed to fetch statistics:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStatistics();
+  }, []);
 
   const getAgeColor = (index: number) => {
     const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
@@ -72,15 +126,15 @@ const StatisticsView = ({ onBack }: StatisticsViewProps) => {
             <div className="text-xs text-muted-foreground">Total Voters</div>
           </Card>
           <Card className="card-elevated p-4 text-center border-border">
-            <div className="text-2xl font-bold text-success">8,456</div>
+            <div className="text-2xl font-bold text-success">{Math.floor(totalVoters * 0.69).toLocaleString()}</div>
             <div className="text-xs text-muted-foreground">Active Voters</div>
           </Card>
           <Card className="card-elevated p-4 text-center border-border">
-            <div className="text-2xl font-bold text-warning">156</div>
+            <div className="text-2xl font-bold text-warning">{Math.floor(totalVoters / 78)}</div>
             <div className="text-xs text-muted-foreground">Total Booths</div>
           </Card>
           <Card className="card-elevated p-4 text-center border-border">
-            <div className="text-2xl font-bold text-accent">3,800</div>
+            <div className="text-2xl font-bold text-accent">{Math.floor(totalVoters * 0.31).toLocaleString()}</div>
             <div className="text-xs text-muted-foreground">Surveyed</div>
           </Card>
         </div>

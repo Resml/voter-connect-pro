@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admins: {
+        Row: {
+          activation_key: string
+          created_at: string
+          email: string | null
+          id: string
+          last_login: string | null
+          mobile_number: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          activation_key: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_login?: string | null
+          mobile_number: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          activation_key?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_login?: string | null
+          mobile_number?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       voters: {
         Row: {
           ac_no: string | null
@@ -24,23 +57,37 @@ export type Database = {
           applicant_full_name_l1: string | null
           applicant_last_name: string | null
           applicant_last_name_l1: string | null
+          birthday: string | null
           booth_address: string | null
           booth_address_l1: string | null
+          caste: string | null
           created_at: string
+          education: string | null
           epic_number: string | null
+          favor_status: string | null
           gender: string | null
           house_number: string | null
           id: string
+          is_dead: boolean | null
+          mobile_number: string | null
+          nagar: string | null
           part_no: string | null
+          party_worker: string | null
+          profession: string | null
           relation_full_name: string | null
           relation_full_name_l1: string | null
           relation_last_name_l1: string | null
           relation_type: string | null
+          role: string | null
           section_no: string | null
           slnoinpart: string | null
+          society: string | null
+          survey_status: string | null
           updated_at: string
           v_address: string | null
           v_address_l1: string | null
+          visited_by: string | null
+          whatsapp_status: string | null
         }
         Insert: {
           ac_no?: string | null
@@ -51,23 +98,37 @@ export type Database = {
           applicant_full_name_l1?: string | null
           applicant_last_name?: string | null
           applicant_last_name_l1?: string | null
+          birthday?: string | null
           booth_address?: string | null
           booth_address_l1?: string | null
+          caste?: string | null
           created_at?: string
+          education?: string | null
           epic_number?: string | null
+          favor_status?: string | null
           gender?: string | null
           house_number?: string | null
           id?: string
+          is_dead?: boolean | null
+          mobile_number?: string | null
+          nagar?: string | null
           part_no?: string | null
+          party_worker?: string | null
+          profession?: string | null
           relation_full_name?: string | null
           relation_full_name_l1?: string | null
           relation_last_name_l1?: string | null
           relation_type?: string | null
+          role?: string | null
           section_no?: string | null
           slnoinpart?: string | null
+          society?: string | null
+          survey_status?: string | null
           updated_at?: string
           v_address?: string | null
           v_address_l1?: string | null
+          visited_by?: string | null
+          whatsapp_status?: string | null
         }
         Update: {
           ac_no?: string | null
@@ -78,23 +139,37 @@ export type Database = {
           applicant_full_name_l1?: string | null
           applicant_last_name?: string | null
           applicant_last_name_l1?: string | null
+          birthday?: string | null
           booth_address?: string | null
           booth_address_l1?: string | null
+          caste?: string | null
           created_at?: string
+          education?: string | null
           epic_number?: string | null
+          favor_status?: string | null
           gender?: string | null
           house_number?: string | null
           id?: string
+          is_dead?: boolean | null
+          mobile_number?: string | null
+          nagar?: string | null
           part_no?: string | null
+          party_worker?: string | null
+          profession?: string | null
           relation_full_name?: string | null
           relation_full_name_l1?: string | null
           relation_last_name_l1?: string | null
           relation_type?: string | null
+          role?: string | null
           section_no?: string | null
           slnoinpart?: string | null
+          society?: string | null
+          survey_status?: string | null
           updated_at?: string
           v_address?: string | null
           v_address_l1?: string | null
+          visited_by?: string | null
+          whatsapp_status?: string | null
         }
         Relationships: []
       }

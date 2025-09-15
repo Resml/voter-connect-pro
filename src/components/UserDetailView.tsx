@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,9 @@ import {
   Users, Volume2, Play, Bluetooth, Clock,
   Save, Plus
 } from 'lucide-react';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UserDetailViewProps {
   voter: any;
@@ -16,20 +19,92 @@ interface UserDetailViewProps {
 }
 
 const UserDetailView = ({ voter, onBack }: UserDetailViewProps) => {
+  const { t } = useLanguage();
   const [isWhatsApp, setIsWhatsApp] = useState(false);
   const [isVisited, setIsVisited] = useState(true);
   const [formData, setFormData] = useState({
-    mobileNo: '1',
-    partyWorker: 'varsha nemade',
-    caste: 'Bihari',
-    nagar: 'laxman nagar',
-    society: 'Om',
-    role: 'Select options',
-    dead: 'No'
+    mobileNo: voter?.mobile_number || '',
+    partyWorker: voter?.party_worker || '',
+    caste: voter?.caste || '',
+    nagar: voter?.nagar || '',
+    society: voter?.society || '',
+    role: voter?.role || 'Select options',
+    dead: voter?.is_dead ? 'Yes' : 'No'
   });
+
+  useEffect(() => {
+    setFormData({
+      mobileNo: voter?.mobile_number || '',
+      partyWorker: voter?.party_worker || '',
+      caste: voter?.caste || '',
+      nagar: voter?.nagar || '',
+      society: voter?.society || '',
+      role: voter?.role || 'Select options',
+      dead: voter?.is_dead ? 'Yes' : 'No'
+    });
+  }, [voter]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const updates = {
+        mobile_number: formData.mobileNo,
+        party_worker: formData.partyWorker,
+        caste: formData.caste,
+        nagar: formData.nagar,
+        society: formData.society,
+        role: formData.role,
+        is_dead: formData.dead === 'Yes'
+      };
+
+      const { error } = await supabase
+        .from('voters')
+        .update(updates)
+        .eq('id', voter.id);
+
+      if (error) {
+        toast({ title: 'Error', description: 'Failed to update voter details', variant: 'destructive' });
+      } else {
+        toast({ title: 'Success', description: 'Voter details updated successfully' });
+      }
+    } catch (err) {
+      toast({ title: 'Error', description: 'Failed to update voter details', variant: 'destructive' });
+    }
+  };
+
+  const handlePrint = () => {
+    const printContent = `विधानसभा मतदारसंघ निवडणूक - 2025
+------------------------------------
+
+*बूथ नं* : ${voter?.ac_no || ''}-${voter?.part_no || ''}
+*अनु क्र.* : ${voter?.slnoinpart || ''}
+*नाव* : ${voter?.applicant_full_name || voter?.applicant_full_name_l1 || ''}
+*कार्ड नं* : ${voter?.epic_number || ''}
+*मतदान केंद्र* : ${voter?.booth_address || voter?.booth_address_l1 || ''}
+------------------------------------
+
+विधानसभा मतदारसंघ निवडणूक - 2025
+
+मतदान दिनांक : 01-06-2025
+वेळ : 7am to 5 pm`;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(printContent).then(() => {
+        toast({ title: 'Copied!', description: 'Voter details copied to clipboard in Marathi format' });
+      });
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = printContent;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      toast({ title: 'Copied!', description: 'Voter details copied to clipboard in Marathi format' });
+    }
   };
 
   return (
@@ -102,7 +177,7 @@ const UserDetailView = ({ voter, onBack }: UserDetailViewProps) => {
             <Button size="sm" className="bg-white text-black hover:bg-gray-100">
               <Bluetooth className="w-4 h-4" />
             </Button>
-            <Button size="sm" className="bg-white text-black hover:bg-gray-100 text-xs">
+            <Button size="sm" className="bg-white text-black hover:bg-gray-100 text-xs" onClick={handlePrint}>
               <Printer className="w-3 h-3 mr-1" />
               Print
             </Button>
@@ -127,7 +202,7 @@ const UserDetailView = ({ voter, onBack }: UserDetailViewProps) => {
             <Button size="sm" className="bg-green-600 text-white hover:bg-green-700">
               ▼
             </Button>
-            <Button size="sm" className="bg-green-600 text-white hover:bg-green-700 flex-1">
+            <Button size="sm" className="bg-green-600 text-white hover:bg-green-700 flex-1" onClick={handleSave}>
               <Save className="w-4 h-4 mr-1" />
               Save
             </Button>
@@ -149,30 +224,31 @@ const UserDetailView = ({ voter, onBack }: UserDetailViewProps) => {
               <div className="space-y-2">
                 <div className="flex gap-4">
                   <span className="font-semibold">Booth No :</span>
-                  <span>1,</span>
+                  <span>{voter?.ac_no || ''}-{voter?.part_no || ''}</span>
                   <span className="font-semibold">Sr.No :</span>
-                  <span>1</span>
+                  <span>{voter?.slnoinpart || ''}</span>
                 </div>
                 <div className="flex gap-4">
                   <span className="font-semibold">Card No:</span>
-                  <span>{voter.cardNo || 'ZSL6215909'}</span>
+                  <span>{voter?.epic_number || ''}</span>
                   <span className="font-semibold">Age:</span>
-                  <span>28</span>
+                  <span>{voter?.age || ''}</span>
                 </div>
                 <div>
                   <span className="font-semibold">Name :</span>
-                  <span className="ml-2">{voter.name || 'Voter Name'}</span>
+                  <span className="ml-2">{voter?.applicant_full_name || voter?.applicant_full_name_l1 || ''}</span>
                 </div>
                 <div>
                   <span className="font-semibold">Address:</span>
-                  <span className="ml-2">{voter.address || 'Address not available'}</span>
+                  <span className="ml-2">{voter?.v_address || voter?.v_address_l1 || ''}</span>
                 </div>
                 <div>
                   <span className="font-semibold">Booth Name:</span>
-                  <span className="ml-2">{voter.boothNo || '1'} / Booth Address Details</span>
+                  <span className="ml-2">{voter?.booth_address || voter?.booth_address_l1 || ''}</span>
                 </div>
                 <div>
                   <span className="font-semibold">Part No :</span>
+                  <span className="ml-2">{voter?.part_no || ''} / {voter?.slnoinpart || ''}</span>
                 </div>
               </div>
             </div>

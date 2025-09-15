@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +7,7 @@ import {
   ArrowLeft, Users, Search, Shield, Activity, FileText,
   CheckCircle, Clock, AlertTriangle, Settings
 } from 'lucide-react';
+import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UserManagementViewProps {
@@ -17,41 +18,37 @@ const UserManagementView = ({ onBack }: UserManagementViewProps) => {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Mock user data - in real app, fetch from database
-  const users = [
-    {
-      id: 1,
-      name: 'राज कुमार',
-      mobile: '9876543210',
-      role: 'Admin',
-      status: 'Active',
-      lastActive: '2 hours ago',
-      permissions: ['All Access']
-    },
-    {
-      id: 2,
-      name: 'सुनीता देवी',
-      mobile: '9876543211',
-      role: 'Coordinator',
-      status: 'Active',
-      lastActive: '1 day ago',
-      permissions: ['Survey', 'Reports']
-    },
-    {
-      id: 3,
-      name: 'अमित शर्मा',
-      mobile: '9876543212',
-      role: 'Volunteer',
-      status: 'Inactive',
-      lastActive: '1 week ago',
-      permissions: ['Survey Only']
-    }
-  ];
+  useEffect(() => {
+    const fetchAdmins = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('admins')
+          .select('*')
+          .order('last_login', { ascending: false });
 
-  const filteredUsers = users.filter(user =>
+        if (error) {
+          console.error('Error fetching admins:', error);
+          return;
+        }
+
+        setAdmins(data || []);
+      } catch (err) {
+        console.error('Failed to fetch admins:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdmins();
+  }, []);
+
+  const filteredUsers = admins.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.mobile.includes(searchTerm)
+    user.mobile_number.includes(searchTerm)
   );
 
   return (
@@ -94,24 +91,24 @@ const UserManagementView = ({ onBack }: UserManagementViewProps) => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">{user.name}</h3>
-                      <p className="text-sm text-muted-foreground">{user.mobile}</p>
+                      <p className="text-sm text-muted-foreground">{user.mobile_number}</p>
                     </div>
                   </div>
-                  <Badge variant={user.status === 'Active' ? 'default' : 'secondary'}>
-                    {user.status}
+                  <Badge variant="default">
+                    Active
                   </Badge>
                 </div>
 
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center gap-2 text-sm">
                     <Shield className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Role:</span>
-                    <span className="font-medium">{user.role}</span>
+                    <span className="text-muted-foreground">Email:</span>
+                    <span className="font-medium">{user.email || 'Not provided'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Last active:</span>
-                    <span>{user.lastActive}</span>
+                    <span className="text-muted-foreground">Last login:</span>
+                    <span>{new Date(user.last_login).toLocaleDateString()}</span>
                   </div>
                 </div>
 

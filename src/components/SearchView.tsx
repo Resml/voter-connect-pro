@@ -112,8 +112,7 @@ useEffect(() => {
       setLoading(true);
       const { data, error } = await (supabase as any)
         .from('voters')
-        .select('*')
-        .limit(2000);
+        .select('*');
       if (error) {
         console.error('Error fetching voters:', error);
         toast({ title: 'Error', description: 'Failed to load voters from database', variant: 'destructive' });
@@ -249,7 +248,7 @@ const handleFileChange = async (e: any) => {
     }
 
     // Refresh data
-    const { data } = await (supabase as any).from('voters').select('*').limit(2000);
+    const { data } = await (supabase as any).from('voters').select('*');
     setVoters(data || []);
 
     toast({ title: 'Import complete', description: `Inserted ${inserted} records.` });
